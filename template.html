@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 960px;
+        margin: auto;
+        padding: 10px;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 3px;
+      }
+      .image-group {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 3px;
+      }
+      .image-info {
+        display: flex;
+        flex-direction: column;
+        margin-right: 20px;
+        margin-bottom: 20px;
+      }
+      .image-info img {
+        margin-bottom: 10px;
+      }
+      #command {
+        background-color: #f0f0f0;
+        padding: 10px;
+        margin-top: 20px;
+        white-space: pre-line;
+        font-family: monospace;
+      }
+      button {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .codeblock {
+        position: relative;
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #f8f8f8;
+        font-family: 'Courier New', Courier, monospace;
+        border-radius: 5px;
+      }
+      .copy-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Duplicate Files in: $directory</h1>
+    <div class="stats">
+      <p>Total files scanned: $file_count</p>
+      <p>Total size of files: $total_size MB</p>
+      <p>Total duplicates found: $duplicate_count</p>
+      <p>Total size of duplicates: $duplicates_size MB</p>
+    </div>
+    <div class="codeblock">
+      <button class="copy-button" onclick="copyToClipboard()">Copy to clipboard</button>
+      <pre id="command"></pre>
+    </div>
+    <button onclick="selectAllDuplicates()">Select all duplicates</button>
+    $image_groups
+
+    <script>
+      function updateCommand() {
+        var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+        var command = 'del';
+
+        const checkboxString = Array.prototype.map
+          .call(checkboxes, (checkbox) => {
+            return '"' + checkbox.value + '"';
+          })
+          .join(' ');
+
+        document.getElementById('command').innerText = command + ' ' + checkboxString;
+      }
+      function selectAllDuplicates() {
+        var imageGroups = document.querySelectorAll('.image-group');
+        imageGroups.forEach(function (group) {
+          var checkboxes = group.querySelectorAll('input[type=checkbox]');
+          for (var i = 1; i < checkboxes.length; i++) {
+            checkboxes[i].checked = true;
+          }
+        });
+        updateCommand();
+      }
+      function copyToClipboard() {
+        var commandText = document.getElementById('command').innerText;
+        var textarea = document.createElement('textarea');
+        textarea.textContent = commandText;
+        textarea.style.position = 'fixed';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          return document.execCommand('copy');
+        } catch (ex) {
+          console.warn('Copy to clipboard failed.', ex);
+          return false;
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      }
+    </script>
+  </body>
+</html>
